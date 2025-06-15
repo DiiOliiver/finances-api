@@ -1,0 +1,26 @@
+[importlinter]
+root_packages =
+    src
+    infra
+    application
+    domain
+
+[importlinter:contract:clean_architecture]
+name = Clean Architecture Layers
+type = layers
+
+layers =
+    src.infra
+    src.application
+    src.domain
+    infra
+    application
+    domain
+
+allow_imports =
+    src.application -> src.domain
+    src.infra -> src.application
+    src.infra -> src.domain
+    application -> domain
+    infra -> application
+    infra -> domain

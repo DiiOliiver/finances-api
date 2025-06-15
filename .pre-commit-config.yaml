@@ -1,0 +1,30 @@
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.4.4
+    hooks:
+      - id: ruff
+      - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: pytest
+        name: Run Pytest
+        entry: poetry run task test
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: check-arch
+        name: Import Linter (Import Contracts)
+        entry: poetry run task check_arch
+        language: system
+        types: [python]
+        pass_filenames: false
+
+      - id: check-branch-name
+        name: Valida nome da branch
+        entry: python .hooks/check_branch_name.py
+        language: system
+        always_run: true
+        stages: [commit]
+        pass_filenames: false
