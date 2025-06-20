@@ -5,8 +5,8 @@ root_packages =
     application
     domain
 
-[importlinter:contract:clean_architecture]
-name = Clean Architecture Layers
+[importlinter:contract:finances-api]
+name = Finances Api Layers
 type = layers
 
 layers =

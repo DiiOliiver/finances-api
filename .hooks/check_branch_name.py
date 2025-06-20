@@ -17,8 +17,8 @@ def main():
 
     if not re.match(pattern, branch):
         print(f"[ERRO] Nome da branch '{branch}' inválido.")
-        print("Padrão esperado: tipo/nome-da-atividade")
-        print("(ex: feature/criar-endpoint-login)")
+        print('Padrão esperado: tipo/nome-da-atividade')
+        print('(ex: feature/criar-endpoint-login)')
         sys.exit(1)
 
 

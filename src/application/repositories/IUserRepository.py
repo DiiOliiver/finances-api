@@ -1,0 +1,35 @@
+from abc import ABC, abstractmethod
+from typing import Optional, TypeVar
+
+from pydantic import BaseModel, EmailStr
+
+from application.dto.PaginationDTO import PaginationDTO
+from application.dto.UserDTO import UserResponseDTO
+
+T = TypeVar('T', bound=BaseModel)
+
+
+class IUserRepository(ABC):
+    @abstractmethod
+    async def add(self, user: T):
+        pass
+
+    @abstractmethod
+    async def get_by_email(self, email: EmailStr) -> T:
+        pass
+
+    @abstractmethod
+    async def paginate(self, page: int, per_page: int) -> PaginationDTO:
+        pass
+
+    @abstractmethod
+    async def find_by(self, user_id: str, model: T) -> Optional[T]:
+        pass
+
+    @abstractmethod
+    async def delete(self, user_id: str):
+        pass
+
+    @abstractmethod
+    async def update(self, user_id: str, user_data: UserResponseDTO) -> T:
+        pass
