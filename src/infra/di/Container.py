@@ -17,7 +17,7 @@ class Container(containers.DeclarativeContainer):
 
     wiring_config = containers.WiringConfiguration(
         modules=[
-            'src.infra.router.endpoint.users',
+            'infra.router.endpoint.users',
         ]
     )
 
