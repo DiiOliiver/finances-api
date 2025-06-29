@@ -5,10 +5,10 @@ from fastapi.openapi.utils import get_openapi
 from fastapi_pagination import add_pagination
 from starlette.middleware.cors import CORSMiddleware
 
-from src.infra.config.settings import Settings
-from src.infra.di.Container import Container
-from src.infra.middleware.ExceptionMiddleware import ExceptionMiddleware
-from src.infra.router.routers import routers as v1_routers
+from infra.config.settings import Settings
+from infra.di.Container import Container
+from infra.middleware.ExceptionMiddleware import ExceptionMiddleware
+from infra.router.routers import routers as v1_routers
 
 container = Container()
 config = Settings()

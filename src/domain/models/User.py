@@ -28,7 +28,7 @@ class User(BaseModel):
         populate_by_name = True
 
     @classmethod
-    def create(cls, name: str, email: str) -> 'User':
+    def create(cls, name: str, email: EmailStr) -> 'User':
         return cls(
             name=name,
             email=email,

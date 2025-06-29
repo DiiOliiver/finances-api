@@ -14,9 +14,7 @@ class UpdateUserUseCase:
         self.user_service = user_service
         self.user_repository = user_repository
 
-    async def execute(
-        self, user_id: str, user_new: UpdateUserDTO
-    ) -> UserResponseDTO:
+    async def execute(self, user_id: str, user_new: UpdateUserDTO) -> str:
         user_old = await self.user_repository.find_by(user_id, UserResponseDTO)
 
         if (
@@ -28,7 +26,10 @@ class UpdateUserUseCase:
 
         user_data = jsonable_encoder(user_old)
 
-        return await self.user_repository.update(user_id, user_data)
+        user: UserResponseDTO = await self.user_repository.update(
+            user_id, user_data
+        )
+        return user.name
 
     @staticmethod
     def _update_users(user_old, user_new):

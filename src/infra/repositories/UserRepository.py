@@ -88,7 +88,7 @@ class UserRepository(BaseRepositoryMongo, IUserRepository):
                 )
 
             data = db[self.collection].find_one({'_id': user_id})
-            return UserResponseDTO(**data).model_dump() if data else None
+            return UserResponseDTO(**data) if data else None
 
     async def delete(self, user_id: str) -> bool:
         with self.mongodb_connection.connection() as client:
