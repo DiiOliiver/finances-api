@@ -28,7 +28,7 @@ class ListAllIncomeUseCase:
             list(user_ids)
         )
         users_lookup = {
-            User(**user).model_dump()['id']: User(**user).model_dump()
+            (user_dump := User(**user).model_dump())['id']: user_dump
             for user in users_data
         }
 
