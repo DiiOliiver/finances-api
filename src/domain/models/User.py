@@ -26,13 +26,3 @@ class User(BaseModel):
 
     class Config:
         populate_by_name = True
-
-    @classmethod
-    def create(cls, name: str, email: EmailStr) -> 'User':
-        return cls(
-            name=name,
-            email=email,
-            status=True,
-            created_at=datetime.utcnow(),
-            updated_at=None,
-        )

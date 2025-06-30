@@ -1,34 +1,26 @@
 from math import ceil
 from typing import Optional, TypeVar
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 from application.dto.PaginationDTO import PaginationDTO
-from application.repositories.IUserRepository import IUserRepository
-from domain.models.User import User
+from application.repositories.IIncomeRepository import IIncomeRepository
+from domain.models.Income import Income
 from infra.config.settings import Settings
 from infra.repositories.BaseRepositoryMongo import BaseRepositoryMongo
 
 T = TypeVar('T', bound=BaseModel)
 
 
-class UserRepository(BaseRepositoryMongo, IUserRepository):
+class IncomeRepository(BaseRepositoryMongo, IIncomeRepository):
     def __init__(self, mongodb_connection):
         config = Settings()
-        super().__init__(config.DATABASE_NAME, 'users', mongodb_connection)
+        super().__init__(config.DATABASE_NAME, 'incomes', mongodb_connection)
 
-    async def add(self, user: T):
+    async def add(self, income: T):
         with self.mongodb_connection.connection() as client:
             db = client[self.database]
-            db[self.collection].insert_one(user.model_dump(by_alias=True))
-
-    async def get_by_email(self, email: EmailStr) -> T:
-        with self.mongodb_connection.connection() as client:
-            db = client[self.database]
-            collection = db[self.collection]
-            data = collection.find_one({'email': email})
-
-            return User(**data) if data else None
+            db[self.collection].insert_one(income.model_dump(by_alias=True))
 
     async def paginate(self, page: int, per_page: int) -> PaginationDTO:
         offset = (page - 1) * per_page
@@ -51,7 +43,7 @@ class UserRepository(BaseRepositoryMongo, IUserRepository):
             total_pages = ceil(total_items / per_page) if per_page else 1
 
             data_cursor = collection.aggregate(paginated_pipeline)
-            data = [User(**doc).model_dump() for doc in data_cursor]
+            data = [Income(**doc).model_dump() for doc in data_cursor]
 
             return PaginationDTO(
                 page=page,
@@ -61,26 +53,26 @@ class UserRepository(BaseRepositoryMongo, IUserRepository):
                 data=data,
             )
 
-    async def find_by(self, user_id: str) -> Optional[dict]:
+    async def find_by(self, income_id: str) -> Optional[dict]:
         with self.mongodb_connection.connection() as client:
             db = client[self.database]
-            data = db[self.collection].find_one({'_id': user_id})
+            data = db[self.collection].find_one({'_id': income_id})
             return data if data else None
 
-    async def update(self, user_id: str, user_data: T) -> bool:
+    async def update(self, income_id: str, income_data: T):
         with self.mongodb_connection.connection() as client:
             db = client[self.database]
 
             result = db[self.collection].update_one(
-                {'_id': user_id}, {'$set': user_data}
+                {'_id': income_id}, {'$set': income_data}
             )
 
             return result.modified_count > 0
 
-    async def delete(self, user_id: str) -> bool:
+    async def delete(self, income_id: str) -> bool:
         with self.mongodb_connection.connection() as client:
             db = client[self.database]
 
-            user_deleted = db[self.collection].delete_one({'_id': user_id})
+            income_deleted = db[self.collection].delete_one({'_id': income_id})
 
-            return user_deleted.deleted_count > 0
+            return income_deleted.deleted_count > 0

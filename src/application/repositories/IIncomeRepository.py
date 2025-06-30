@@ -1,21 +1,17 @@
 from abc import ABC, abstractmethod
 from typing import Optional, TypeVar
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 
 from application.dto.PaginationDTO import PaginationDTO
-from domain.models.User import User
+from domain.models.Income import Income
 
 T = TypeVar('T', bound=BaseModel)
 
 
-class IUserRepository(ABC):
+class IIncomeRepository(ABC):
     @abstractmethod
-    async def add(self, user: T):
-        pass
-
-    @abstractmethod
-    async def get_by_email(self, email: EmailStr) -> T:
+    async def add(self, income: T):
         pass
 
     @abstractmethod
@@ -23,13 +19,13 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
-    async def find_by(self, user_id: str) -> Optional[dict]:
+    async def find_by(self, income_id: str) -> Optional[dict]:
         pass
 
     @abstractmethod
-    async def delete(self, user_id: str):
+    async def delete(self, income_id: str):
         pass
 
     @abstractmethod
-    async def update(self, user_id: str, user_data: User) -> bool:
+    async def update(self, income_id: str, income_data: Income) -> T:
         pass

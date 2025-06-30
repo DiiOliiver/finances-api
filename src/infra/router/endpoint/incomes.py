@@ -13,35 +13,34 @@ from starlette.status import (
     HTTP_500_INTERNAL_SERVER_ERROR,
 )
 
+from application.dto.IncomeDTO import CreateIncomeDTO, UpdateIncomeDTO
 from application.dto.PaginationDTO import PaginationDTO
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
-from application.dto.UserDTO import (
-    CreateUserDTO,
-    UpdateUserDTO,
+from application.usecases.income.CreateIncomeUseCase import CreateIncomeUseCase
+from application.usecases.income.DeleteIncomeUseCase import DeleteIncomeUseCase
+from application.usecases.income.FindByIncomeUseCase import FindByIncomeUseCase
+from application.usecases.income.ListAllIncomeUseCase import (
+    ListAllIncomeUseCase,
 )
-from application.usecases.user.CreateUserUseCase import CreateUserUseCase
-from application.usecases.user.DeleteUserUseCase import DeleteUserUseCase
-from application.usecases.user.FindByUserUseCase import FindByUserUseCase
-from application.usecases.user.ListAllUserUseCase import ListAllUserUseCase
-from application.usecases.user.UpdateUserUseCase import UpdateUserUseCase
+from application.usecases.income.UpdateIncomeUseCase import UpdateIncomeUseCase
 from infra.di.Container import Container
 
-router = APIRouter(prefix='/users', tags=['Users'])
+router = APIRouter(prefix='/incomes', tags=['Incomes'])
 
 T = TypeVar('T')
 
 
-@router.post('', status_code=HTTP_201_CREATED, summary='Cadastro de usuário')
+@router.post('', status_code=HTTP_201_CREATED, summary='Cadastro de renda')
 @inject
-async def create_user(
+async def create_income(
     request: Request,
-    data: CreateUserDTO,
-    create_user_use_case: CreateUserUseCase = Depends(
-        Provide[Container.create_user_use_case]
+    data: CreateIncomeDTO,
+    create_income_use_case: CreateIncomeUseCase = Depends(
+        Provide[Container.create_income_use_case]
     ),
 ) -> ResponseDTO:
     try:
-        message_response = await create_user_use_case.execute(data)
+        message_response = await create_income_use_case.execute(data)
         return ResponseDTO(
             status=StatusEnum.SUCCESS,
             message=message_response,
@@ -58,18 +57,18 @@ async def create_user(
         )
 
 
-@router.get('', status_code=HTTP_200_OK, summary='Lista páginavel de usuários')
+@router.get('', status_code=HTTP_200_OK, summary='Lista páginavel de rendas')
 @inject
-async def read_users(
+async def read_incomes(
     request: Request,
     page: int = 1,
     per_page: int = 10,
-    list_user_use_case: ListAllUserUseCase = Depends(
-        Provide[Container.list_user_use_case]
+    list_income_use_case: ListAllIncomeUseCase = Depends(
+        Provide[Container.list_income_use_case]
     ),
 ) -> ResponseDTO:
     try:
-        pagination: PaginationDTO = await list_user_use_case.execute(
+        pagination: PaginationDTO = await list_income_use_case.execute(
             page, per_page
         )
         return ResponseDTO(status=StatusEnum.SUCCESS, data=pagination.dict())
@@ -85,18 +84,18 @@ async def read_users(
         )
 
 
-@router.get('/{user_id}', status_code=HTTP_200_OK, summary='Consulta usuário')
+@router.get('/{income_id}', status_code=HTTP_200_OK, summary='Consulta renda')
 @inject
-async def read_user(
+async def read_income(
     request: Request,
-    user_id: str,
-    find_by_user_use_case: FindByUserUseCase = Depends(
-        Provide[Container.find_by_user_use_case]
+    income_id: str,
+    find_by_income_use_case: FindByIncomeUseCase = Depends(
+        Provide[Container.find_by_income_use_case]
     ),
 ):
     try:
-        user = await find_by_user_use_case.execute(user_id)
-        return ResponseDTO(status=StatusEnum.SUCCESS, data=user.dict())
+        income = await find_by_income_use_case.execute(income_id)
+        return ResponseDTO(status=StatusEnum.SUCCESS, data=income.dict())
     except HTTPException:
         raise
     except Exception:
@@ -109,18 +108,20 @@ async def read_user(
         )
 
 
-@router.put('/{user_id}', status_code=HTTP_200_OK, summary='Atualizar renda')
+@router.put('/{income_id}', status_code=HTTP_200_OK, summary='Atualizar renda')
 @inject
-async def update_user(
+async def update_income(
     request: Request,
-    user_id: str,
-    data: UpdateUserDTO,
-    update_user_use_case: UpdateUserUseCase = Depends(
-        Provide[Container.update_user_use_case]
+    income_id: str,
+    data: UpdateIncomeDTO,
+    update_income_use_case: UpdateIncomeUseCase = Depends(
+        Provide[Container.update_income_use_case]
     ),
 ) -> ResponseDTO:
     try:
-        message_response = await update_user_use_case.execute(user_id, data)
+        message_response = await update_income_use_case.execute(
+            income_id, data
+        )
         return ResponseDTO(
             status=StatusEnum.SUCCESS,
             message=message_response,
@@ -137,25 +138,26 @@ async def update_user(
         )
 
 
-@router.delete('/{user_id}', status_code=HTTP_200_OK, summary='Remover renda')
+@router.delete(
+    '/{income_id}', status_code=HTTP_200_OK, summary='Remover renda'
+)
 @inject
-async def delete_user(
+async def delete_income(
     request: Request,
-    user_id: str,
-    delete_user_use_case: DeleteUserUseCase = Depends(
-        Provide[Container.delete_user_use_case]
+    income_id: str,
+    delete_income_use_case: DeleteIncomeUseCase = Depends(
+        Provide[Container.delete_income_use_case]
     ),
 ) -> ResponseDTO:
     try:
-        message_response = await delete_user_use_case.execute(user_id)
+        message_response = await delete_income_use_case.execute(income_id)
         return ResponseDTO(
             status=StatusEnum.SUCCESS,
             message=message_response,
         )
     except HTTPException:
         raise
-    except Exception as exc:
-        print(exc)
+    except Exception:
         raise HTTPException(
             status_code=HTTP_500_INTERNAL_SERVER_ERROR,
             detail=ResponseDTO(
