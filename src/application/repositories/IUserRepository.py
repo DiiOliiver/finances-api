@@ -27,6 +27,10 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
+    async def find_many_by_ids(self, user_ids: list[str]) -> list[dict]:
+        pass
+
+    @abstractmethod
     async def delete(self, user_id: str):
         pass
 

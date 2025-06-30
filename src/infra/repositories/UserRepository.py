@@ -67,6 +67,14 @@ class UserRepository(BaseRepositoryMongo, IUserRepository):
             data = db[self.collection].find_one({'_id': user_id})
             return data if data else None
 
+    async def find_many_by_ids(self, user_ids: list[str]) -> list[dict]:
+        if not user_ids:
+            return []
+        with self.mongodb_connection.connection() as client:
+            db = client[self.database]
+            cursor = db[self.collection].find({'_id': {'$in': user_ids}})
+            return list(cursor)
+
     async def update(self, user_id: str, user_data: T) -> bool:
         with self.mongodb_connection.connection() as client:
             db = client[self.database]
