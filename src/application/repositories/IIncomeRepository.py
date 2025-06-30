@@ -27,5 +27,5 @@ class IIncomeRepository(ABC):
         pass
 
     @abstractmethod
-    async def update(self, income_id: str, income_data: Income) -> T:
+    async def update(self, income_id: str, income_data: Income) -> bool:
         pass

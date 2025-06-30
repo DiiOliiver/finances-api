@@ -53,7 +53,7 @@ async def create_income(
         )
 
 
-@router.get('', status_code=HTTP_200_OK, summary='Lista páginavel de rendas')
+@router.get('', status_code=HTTP_200_OK, summary='Lista paginável de rendas')
 @inject
 async def read_incomes(
     request: Request,

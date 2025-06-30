@@ -32,7 +32,7 @@ class UpdateUserUseCase:
 
         if (
             user_old.email != user_new.email
-        ) & await self.user_service.is_email_taken(user_new.email):
+        ) and await self.user_service.is_email_taken(user_new.email):
             raise HTTPException(
                 status_code=HTTP_400_BAD_REQUEST,
                 detail=ResponseDTO(
