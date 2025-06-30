@@ -1,5 +1,3 @@
-from typing import TypeVar
-
 from dependency_injector.wiring import Provide, inject
 from fastapi import (
     APIRouter,
@@ -26,8 +24,6 @@ from application.usecases.income.UpdateIncomeUseCase import UpdateIncomeUseCase
 from infra.di.Container import Container
 
 router = APIRouter(prefix='/incomes', tags=['Incomes'])
-
-T = TypeVar('T')
 
 
 @router.post('', status_code=HTTP_201_CREATED, summary='Cadastro de renda')

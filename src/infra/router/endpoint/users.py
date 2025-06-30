@@ -1,5 +1,3 @@
-from typing import TypeVar
-
 from dependency_injector.wiring import Provide, inject
 from fastapi import (
     APIRouter,
@@ -27,8 +25,6 @@ from application.usecases.user.UpdateUserUseCase import UpdateUserUseCase
 from infra.di.Container import Container
 
 router = APIRouter(prefix='/users', tags=['Users'])
-
-T = TypeVar('T')
 
 
 @router.post('', status_code=HTTP_201_CREATED, summary='Cadastro de usuário')
@@ -154,8 +150,7 @@ async def delete_user(
         )
     except HTTPException:
         raise
-    except Exception as exc:
-        print(exc)
+    except Exception:
         raise HTTPException(
             status_code=HTTP_500_INTERNAL_SERVER_ERROR,
             detail=ResponseDTO(

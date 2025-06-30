@@ -20,6 +20,8 @@ class ListAllIncomeUseCase:
         data_page = []
         for income in pagination.data:
             user_data = await self.user_repository.find_by(income['user_id'])
+            if user_data is None:
+                continue
             income['user'] = User(**user_data).model_dump()
             income.pop('user_id', None)
             data_page.append(income)
