@@ -68,7 +68,7 @@ async def read_income(
     find_by_income_use_case: FindByIncomeUseCase = Depends(
         Provide[Container.find_by_income_use_case]
     ),
-):
+) -> ResponseDTO:
     income = await find_by_income_use_case.execute(income_id)
     return ResponseDTO(status=StatusEnum.SUCCESS, data=income.dict())
 

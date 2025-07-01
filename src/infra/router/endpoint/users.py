@@ -43,7 +43,7 @@ async def create_user(
     )
 
 
-@router.get('', status_code=HTTP_200_OK, summary='Lista páginavel de usuários')
+@router.get('', status_code=HTTP_200_OK, summary='Lista paginável de usuários')
 @inject
 @error_handler
 async def read_users(
@@ -69,7 +69,7 @@ async def read_user(
     find_by_user_use_case: FindByUserUseCase = Depends(
         Provide[Container.find_by_user_use_case]
     ),
-):
+) -> ResponseDTO:
     user = await find_by_user_use_case.execute(user_id)
     return ResponseDTO(status=StatusEnum.SUCCESS, data=user.dict())
 
