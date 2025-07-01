@@ -74,7 +74,7 @@ async def read_user(
     return ResponseDTO(status=StatusEnum.SUCCESS, data=user.dict())
 
 
-@router.put('/{user_id}', status_code=HTTP_200_OK, summary='Atualizar renda')
+@router.put('/{user_id}', status_code=HTTP_200_OK, summary='Atualizar usuário')
 @inject
 @error_handler
 async def update_user(
@@ -92,7 +92,9 @@ async def update_user(
     )
 
 
-@router.delete('/{user_id}', status_code=HTTP_200_OK, summary='Remover renda')
+@router.delete(
+    '/{user_id}', status_code=HTTP_200_OK, summary='Remover usuário'
+)
 @inject
 @error_handler
 async def delete_user(
