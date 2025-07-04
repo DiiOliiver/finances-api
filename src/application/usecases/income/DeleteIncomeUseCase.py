@@ -26,4 +26,4 @@ class DeleteIncomeUseCase:
             )
         await self.income_repository.delete(income_id)
         income_model = Income(**income_data)
-        return f'Renda {income_model.amount} da categoria {income_model.category} foi removido com sucesso.'
+        return f'Renda {income_model.amount} da categoria {income_model.category} foi removida com sucesso.'
