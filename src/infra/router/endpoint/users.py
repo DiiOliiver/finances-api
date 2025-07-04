@@ -1,16 +1,12 @@
-from typing import TypeVar
-
 from dependency_injector.wiring import Provide, inject
 from fastapi import (
     APIRouter,
     Depends,
-    HTTPException,
     Request,
 )
 from starlette.status import (
     HTTP_200_OK,
     HTTP_201_CREATED,
-    HTTP_500_INTERNAL_SERVER_ERROR,
 )
 
 from application.dto.PaginationDTO import PaginationDTO
@@ -24,15 +20,15 @@ from application.usecases.user.DeleteUserUseCase import DeleteUserUseCase
 from application.usecases.user.FindByUserUseCase import FindByUserUseCase
 from application.usecases.user.ListAllUserUseCase import ListAllUserUseCase
 from application.usecases.user.UpdateUserUseCase import UpdateUserUseCase
+from application.utils.error_handler import error_handler
 from infra.di.Container import Container
 
 router = APIRouter(prefix='/users', tags=['Users'])
 
-T = TypeVar('T')
 
-
-@router.post('', status_code=HTTP_201_CREATED, summary='Criação de usuário')
+@router.post('', status_code=HTTP_201_CREATED, summary='Cadastro de usuário')
 @inject
+@error_handler
 async def create_user(
     request: Request,
     data: CreateUserDTO,
@@ -40,24 +36,16 @@ async def create_user(
         Provide[Container.create_user_use_case]
     ),
 ) -> ResponseDTO:
-    try:
-        user_name = await create_user_use_case.execute(data)
-        return ResponseDTO(
-            status=StatusEnum.SUCCESS,
-            message=f'Usuário {user_name} cadastrado com sucesso.',
-        )
-    except HTTPException:
-        raise HTTPException(
-            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=ResponseDTO(
-                status=StatusEnum.FAIL,
-                message='Ocorreu um erro interno no servidor.',
-            ),
-        )
+    message_response = await create_user_use_case.execute(data)
+    return ResponseDTO(
+        status=StatusEnum.SUCCESS,
+        message=message_response,
+    )
 
 
-@router.get('', status_code=HTTP_200_OK, summary='Lista páginavel de usuários')
+@router.get('', status_code=HTTP_200_OK, summary='Lista paginável de usuários')
 @inject
+@error_handler
 async def read_users(
     request: Request,
     page: int = 1,
@@ -66,45 +54,29 @@ async def read_users(
         Provide[Container.list_user_use_case]
     ),
 ) -> ResponseDTO:
-    try:
-        pagination: PaginationDTO = await list_user_use_case.execute(
-            page, per_page
-        )
-        return ResponseDTO(status=StatusEnum.SUCCESS, data=pagination.dict())
-    except HTTPException:
-        raise HTTPException(
-            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=ResponseDTO(
-                status=StatusEnum.FAIL,
-                message='Ocorreu um erro interno no servidor.',
-            ),
-        )
+    pagination: PaginationDTO = await list_user_use_case.execute(
+        page, per_page
+    )
+    return ResponseDTO(status=StatusEnum.SUCCESS, data=pagination.dict())
 
 
-@router.get('/{user_id}', status_code=HTTP_200_OK)
+@router.get('/{user_id}', status_code=HTTP_200_OK, summary='Consulta usuário')
 @inject
+@error_handler
 async def read_user(
     request: Request,
     user_id: str,
     find_by_user_use_case: FindByUserUseCase = Depends(
         Provide[Container.find_by_user_use_case]
     ),
-):
-    try:
-        user = await find_by_user_use_case.execute(user_id)
-        return ResponseDTO(status=StatusEnum.SUCCESS, data=user.dict())
-    except HTTPException:
-        raise HTTPException(
-            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=ResponseDTO(
-                status=StatusEnum.FAIL,
-                message='Ocorreu um erro interno no servidor.',
-            ),
-        )
+) -> ResponseDTO:
+    user = await find_by_user_use_case.execute(user_id)
+    return ResponseDTO(status=StatusEnum.SUCCESS, data=user.dict())
 
 
-@router.put('/{user_id}', status_code=HTTP_200_OK)
+@router.put('/{user_id}', status_code=HTTP_200_OK, summary='Atualizar usuário')
 @inject
+@error_handler
 async def update_user(
     request: Request,
     user_id: str,
@@ -113,24 +85,18 @@ async def update_user(
         Provide[Container.update_user_use_case]
     ),
 ) -> ResponseDTO:
-    try:
-        user_name = await update_user_use_case.execute(user_id, data)
-        return ResponseDTO(
-            status=StatusEnum.SUCCESS,
-            message=f'Usuário {user_name} atualizado com sucesso.',
-        )
-    except HTTPException:
-        raise HTTPException(
-            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=ResponseDTO(
-                status=StatusEnum.FAIL,
-                message='Ocorreu um erro interno no servidor.',
-            ),
-        )
+    message_response = await update_user_use_case.execute(user_id, data)
+    return ResponseDTO(
+        status=StatusEnum.SUCCESS,
+        message=message_response,
+    )
 
 
-@router.delete('/{user_id}', status_code=HTTP_200_OK)
+@router.delete(
+    '/{user_id}', status_code=HTTP_200_OK, summary='Remover usuário'
+)
 @inject
+@error_handler
 async def delete_user(
     request: Request,
     user_id: str,
@@ -138,17 +104,8 @@ async def delete_user(
         Provide[Container.delete_user_use_case]
     ),
 ) -> ResponseDTO:
-    try:
-        user_name = await delete_user_use_case.execute(user_id)
-        return ResponseDTO(
-            status=StatusEnum.SUCCESS,
-            message=f'Usuário {user_name} foi removido.',
-        )
-    except HTTPException:
-        raise HTTPException(
-            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=ResponseDTO(
-                status=StatusEnum.FAIL,
-                message='Ocorreu um erro interno no servidor.',
-            ),
-        )
+    message_response = await delete_user_use_case.execute(user_id)
+    return ResponseDTO(
+        status=StatusEnum.SUCCESS,
+        message=message_response,
+    )

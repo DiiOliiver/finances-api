@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from fastapi import HTTPException
 from starlette.status import HTTP_400_BAD_REQUEST
 
@@ -30,9 +32,15 @@ class CreateUserUseCase:
                 ),
             )
 
-        user = User.create(name=data.name, email=data.email)
+        user = User(
+            name=data.name,
+            email=data.email,
+            status=True,
+            created_at=datetime.utcnow(),
+            updated_at=None,
+        )
         await self.user_repository.add(user)
 
         await self.user_gateway.send_welcome_email(user.email, user.name)
 
-        return user.name
+        return f'Usuário {user.name} cadastrado com sucesso.'

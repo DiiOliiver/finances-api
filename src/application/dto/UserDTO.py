@@ -1,6 +1,3 @@
-import datetime
-from typing import Optional
-
 from pydantic import BaseModel, EmailStr
 
 
@@ -18,5 +15,3 @@ class UserResponseDTO(BaseModel):
     name: str
     email: EmailStr
     status: bool
-    created_at: datetime.datetime
-    updated_at: Optional[datetime.datetime]

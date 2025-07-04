@@ -4,7 +4,7 @@ from typing import Optional, TypeVar
 from pydantic import BaseModel, EmailStr
 
 from application.dto.PaginationDTO import PaginationDTO
-from application.dto.UserDTO import UserResponseDTO
+from domain.models.User import User
 
 T = TypeVar('T', bound=BaseModel)
 
@@ -23,7 +23,11 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
-    async def find_by(self, user_id: str, model: T) -> Optional[T]:
+    async def find_by(self, user_id: str) -> Optional[dict]:
+        pass
+
+    @abstractmethod
+    async def find_many_by_ids(self, user_ids: list[str]) -> list[dict]:
         pass
 
     @abstractmethod
@@ -31,5 +35,5 @@ class IUserRepository(ABC):
         pass
 
     @abstractmethod
-    async def update(self, user_id: str, user_data: UserResponseDTO) -> T:
+    async def update(self, user_id: str, user_data: User) -> bool:
         pass
