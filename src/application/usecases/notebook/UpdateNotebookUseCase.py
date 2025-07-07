@@ -29,7 +29,7 @@ class UpdateNotebookUseCase:
                 ).model_dump(),
             )
 
-        notebook_data.update(notebook_new)
+        notebook_data.update(notebook_new.model_dump())
         notebook_old = Notebook(**notebook_data)
 
         is_update = await self.notebook_repository.update(
