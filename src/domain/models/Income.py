@@ -8,9 +8,7 @@ from pydantic import BaseModel, Field
 
 class Income(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid4()), alias='_id')
-    user_id: str = Field(
-        ..., min_length=1, max_length=100, description='Id do usuário'
-    )
+    user_id: str = Field(..., description='Id do usuário')
     amount: float = Field(..., description='Valor da renda')
     income_day: str = Field(..., description='Dia da renda')
     category: Optional[str] = Field(None, description='Categoria')

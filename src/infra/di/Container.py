@@ -9,6 +9,21 @@ from application.usecases.income.ListAllIncomeUseCase import (
     ListAllIncomeUseCase,
 )
 from application.usecases.income.UpdateIncomeUseCase import UpdateIncomeUseCase
+from application.usecases.notebook.CreateNotebookUseCase import (
+    CreateNotebookUseCase,
+)
+from application.usecases.notebook.DeleteNotebookUseCase import (
+    DeleteNotebookUseCase,
+)
+from application.usecases.notebook.FindByNotebookUseCase import (
+    FindByNotebookUseCase,
+)
+from application.usecases.notebook.ListAllNotebookUseCase import (
+    ListAllNotebookUseCase,
+)
+from application.usecases.notebook.UpdateNotebookUseCase import (
+    UpdateNotebookUseCase,
+)
 from application.usecases.user.CreateUserUseCase import CreateUserUseCase
 from application.usecases.user.DeleteUserUseCase import DeleteUserUseCase
 from application.usecases.user.FindByUserUseCase import FindByUserUseCase
@@ -17,6 +32,7 @@ from application.usecases.user.UpdateUserUseCase import UpdateUserUseCase
 from infra.config.settings import Settings
 from infra.database.MongoDBConection import MongoDBConnection
 from infra.repositories.IncomeRepository import IncomeRepository
+from infra.repositories.NotebookRepository import NotebookRepository
 from infra.repositories.UserRepository import UserRepository
 
 
@@ -27,6 +43,7 @@ class Container(containers.DeclarativeContainer):
         modules=[
             'infra.router.endpoint.users',
             'infra.router.endpoint.incomes',
+            'infra.router.endpoint.notebook',
         ]
     )
 
@@ -42,8 +59,13 @@ class Container(containers.DeclarativeContainer):
     user_repository = providers.Factory(
         UserRepository, mongodb_connection=connection_db_mongo
     )
+
     income_repository = providers.Factory(
         IncomeRepository, mongodb_connection=connection_db_mongo
+    )
+
+    notebook_repository = providers.Factory(
+        NotebookRepository, mongodb_connection=connection_db_mongo
     )
 
     # Service
@@ -104,4 +126,33 @@ class Container(containers.DeclarativeContainer):
     delete_income_use_case = providers.Factory(
         DeleteIncomeUseCase,
         income_repository=income_repository,
+    )
+
+    # Usecase: notebook
+    create_notebook_use_case = providers.Factory(
+        CreateNotebookUseCase,
+        notebook_repository=notebook_repository,
+        user_id=config.USER_ID,
+    )
+
+    list_notebook_use_case = providers.Factory(
+        ListAllNotebookUseCase,
+        notebook_repository=notebook_repository,
+        user_repository=user_repository,
+    )
+
+    find_by_notebook_use_case = providers.Factory(
+        FindByNotebookUseCase,
+        notebook_repository=notebook_repository,
+        user_repository=user_repository,
+    )
+
+    update_notebook_use_case = providers.Factory(
+        UpdateNotebookUseCase,
+        notebook_repository=notebook_repository,
+    )
+
+    delete_notebook_use_case = providers.Factory(
+        DeleteNotebookUseCase,
+        notebook_repository=notebook_repository,
     )
