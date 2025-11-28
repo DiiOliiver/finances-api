@@ -15,8 +15,8 @@ class ListAllNotebookUseCase:
         self.user_repository = user_repository
 
     async def execute(self, page: int, per_page: int) -> PaginationDTO:
-        page = max(1, page)
-        per_page = max(1, per_page)
+        page = 1 if page < 1 else page
+        per_page = 10 if per_page < 1 else per_page
 
         pagination = await self.notebook_repository.paginate(page, per_page)
 

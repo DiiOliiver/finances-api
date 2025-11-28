@@ -1,12 +1,11 @@
-from fastapi import HTTPException
-from starlette.status import HTTP_404_NOT_FOUND
-
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
 from application.dto.UserDTO import UserResponseDTO
 from application.repositories.IUserRepository import (
     IUserRepository,
 )
 from domain.models.User import User
+from fastapi import HTTPException
+from starlette.status import HTTP_404_NOT_FOUND
 
 
 class FindByUserUseCase:

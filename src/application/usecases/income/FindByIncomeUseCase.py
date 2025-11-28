@@ -1,14 +1,13 @@
-from fastapi import HTTPException
-from starlette.status import (
-    HTTP_404_NOT_FOUND,
-)
-
 from application.dto.IncomeDTO import IncomeResponseDTO
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
 from application.repositories.IIncomeRepository import IIncomeRepository
 from application.repositories.IUserRepository import IUserRepository
 from domain.models.Income import Income
 from domain.models.User import User
+from fastapi import HTTPException
+from starlette.status import (
+    HTTP_404_NOT_FOUND,
+)
 
 
 class FindByIncomeUseCase:

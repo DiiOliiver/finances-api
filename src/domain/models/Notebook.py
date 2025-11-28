@@ -3,14 +3,31 @@ from typing import List, Optional
 from uuid import uuid4
 
 from bson import ObjectId
+from domain.models.enum.ExpenseStatus import ExpenseStatus
 from pydantic import BaseModel, Field
-
-from domain.models import Expense
 
 
 class NotebookComment(BaseModel):
     message: str = Field(..., description='Mensagem')
     user_id: str = Field(..., description='Id do usuário')
+    created_at: datetime = Field(
+        default_factory=datetime.now,
+        description='Data da criação do registro.',
+    )
+    updated_at: Optional[datetime] = Field(
+        None, description='Data da atualização do registro.'
+    )
+
+
+class NotebookExpense(BaseModel):
+    id: Optional[str] = Field(None, description='ID da despesa fixa')
+    amount: float = Field(..., description='Valor da despesa')
+    category: Optional[str] = Field(None, description='Categoria')
+    description: Optional[str] = Field(None, description='Descrição')
+    status: ExpenseStatus = Field(..., description='Status da despesa')
+    created_by: Optional[str] = Field(
+        None, description='Usuário que criou o registro'
+    )
     created_at: datetime = Field(
         default_factory=datetime.now,
         description='Data da criação do registro.',
@@ -32,7 +49,7 @@ class Notebook(BaseModel):
     comments: Optional[List[NotebookComment]] = Field(
         None, description='Comentário de usuários'
     )
-    expenses: Optional[List[Expense]] = Field(
+    expenses: Optional[List[NotebookExpense]] = Field(
         None, description='Despesa de usuários'
     )
     created_by: str = Field(None, description='Usuário que criou o registro')

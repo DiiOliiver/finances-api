@@ -1,14 +1,13 @@
 from datetime import datetime
 from typing import Optional
 
-from fastapi import HTTPException
-from fastapi.encoders import jsonable_encoder
-from starlette.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
-
 from application.dto.IncomeDTO import UpdateIncomeDTO
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
 from application.repositories.IIncomeRepository import IIncomeRepository
 from domain.models.Income import Income
+from fastapi import HTTPException
+from fastapi.encoders import jsonable_encoder
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
 
 
 class UpdateIncomeUseCase:

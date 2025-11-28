@@ -1,14 +1,13 @@
 from datetime import datetime
 
-from fastapi import HTTPException
-from fastapi.encoders import jsonable_encoder
-from starlette.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
-
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
 from application.dto.UserDTO import UpdateUserDTO
 from application.repositories.IUserRepository import IUserRepository
 from application.services.UserService import UserService
 from domain.models.User import User
+from fastapi import HTTPException
+from fastapi.encoders import jsonable_encoder
+from starlette.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
 
 
 class UpdateUserUseCase:

@@ -1,13 +1,12 @@
 from math import ceil
 from typing import Optional, TypeVar
 
-from pydantic import BaseModel, EmailStr
-
 from application.dto.PaginationDTO import PaginationDTO
 from application.repositories.IUserRepository import IUserRepository
 from domain.models.User import User
 from infra.config.settings import Settings
 from infra.repositories.BaseRepositoryMongo import BaseRepositoryMongo
+from pydantic import BaseModel, EmailStr
 
 T = TypeVar('T', bound=BaseModel)
 

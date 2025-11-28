@@ -1,14 +1,13 @@
 from datetime import datetime
 
-from fastapi import HTTPException
-from starlette.status import HTTP_400_BAD_REQUEST
-
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
 from application.dto.UserDTO import CreateUserDTO
 from application.gateway import IUserGateway
 from application.repositories.IUserRepository import IUserRepository
 from application.services.UserService import UserService
 from domain.models.User import User
+from fastapi import HTTPException
+from starlette.status import HTTP_400_BAD_REQUEST
 
 
 class CreateUserUseCase:

@@ -1,14 +1,3 @@
-from dependency_injector.wiring import Provide, inject
-from fastapi import (
-    APIRouter,
-    Depends,
-    Request,
-)
-from starlette.status import (
-    HTTP_200_OK,
-    HTTP_201_CREATED,
-)
-
 from application.dto.PaginationDTO import PaginationDTO
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
 from application.dto.UserDTO import (
@@ -21,7 +10,17 @@ from application.usecases.user.FindByUserUseCase import FindByUserUseCase
 from application.usecases.user.ListAllUserUseCase import ListAllUserUseCase
 from application.usecases.user.UpdateUserUseCase import UpdateUserUseCase
 from application.utils.error_handler import error_handler
+from dependency_injector.wiring import Provide, inject
+from fastapi import (
+    APIRouter,
+    Depends,
+    Request,
+)
 from infra.di.Container import Container
+from starlette.status import (
+    HTTP_200_OK,
+    HTTP_201_CREATED,
+)
 
 router = APIRouter(prefix='/users', tags=['Users'])
 

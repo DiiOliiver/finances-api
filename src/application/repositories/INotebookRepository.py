@@ -1,10 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Optional, TypeVar
 
-from pydantic import BaseModel
-
 from application.dto.PaginationDTO import PaginationDTO
 from domain.models.Notebook import Notebook
+from pydantic import BaseModel
 
 T = TypeVar('T', bound=BaseModel)
 

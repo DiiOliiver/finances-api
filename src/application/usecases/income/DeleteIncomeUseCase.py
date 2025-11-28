@@ -1,11 +1,10 @@
 from typing import Optional
 
-from fastapi import HTTPException
-from starlette.status import HTTP_404_NOT_FOUND
-
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
 from application.repositories.IIncomeRepository import IIncomeRepository
 from domain.models.Income import Income
+from fastapi import HTTPException
+from starlette.status import HTTP_404_NOT_FOUND
 
 
 class DeleteIncomeUseCase:

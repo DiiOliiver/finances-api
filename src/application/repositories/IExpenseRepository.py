@@ -2,15 +2,15 @@ from abc import ABC, abstractmethod
 from typing import Optional, TypeVar
 
 from application.dto.PaginationDTO import PaginationDTO
-from domain.models.Income import Income
+from domain.models import Expense
 from pydantic import BaseModel
 
 T = TypeVar('T', bound=BaseModel)
 
 
-class IIncomeRepository(ABC):
+class IExpenseRepository(ABC):
     @abstractmethod
-    async def add(self, income: T):
+    async def add(self, expense: T):
         pass
 
     @abstractmethod
@@ -18,13 +18,13 @@ class IIncomeRepository(ABC):
         pass
 
     @abstractmethod
-    async def find_by(self, income_id: str) -> Optional[dict]:
+    async def find_by(self, expense_id: str) -> Optional[dict]:
         pass
 
     @abstractmethod
-    async def delete(self, income_id: str):
+    async def delete(self, expense_id: str):
         pass
 
     @abstractmethod
-    async def update(self, income_id: str, income_data: Income) -> bool:
+    async def update(self, expense_id: str, expense_data: Expense) -> bool:
         pass
