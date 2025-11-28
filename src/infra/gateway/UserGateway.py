@@ -1,12 +1,11 @@
 from email.message import EmailMessage
 
 from aiosmtplib import send
-from redis.asyncio import Redis
-
 from application.gateway import (
     IUserGateway,
 )
 from infra.config.settings import Settings
+from redis.asyncio import Redis
 
 settings = Settings()
 

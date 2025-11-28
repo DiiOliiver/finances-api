@@ -1,10 +1,9 @@
 from contextlib import AbstractContextManager
 from typing import Callable, Optional, Type, TypeVar
 
+from application.repositories.IBaseRepository import IBaseRepository
 from pydantic import BaseModel
 from pymongo import MongoClient
-
-from application.repositories.IBaseRepository import IBaseRepository
 
 T = TypeVar('T', bound=BaseModel)
 

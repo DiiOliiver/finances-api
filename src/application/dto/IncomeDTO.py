@@ -1,8 +1,7 @@
 from typing import Optional
 
-from pydantic import BaseModel
-
 from application.dto.UserDTO import UserResponseDTO
+from pydantic import BaseModel
 
 
 class CreateIncomeDTO(BaseModel):

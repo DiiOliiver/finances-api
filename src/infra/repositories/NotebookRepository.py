@@ -1,13 +1,12 @@
 from math import ceil
 from typing import Optional, TypeVar
 
-from pydantic import BaseModel
-
 from application.dto.PaginationDTO import PaginationDTO
 from application.repositories.INotebookRepository import INotebookRepository
 from domain.models.Notebook import Notebook
 from infra.config.settings import Settings
 from infra.repositories.BaseRepositoryMongo import BaseRepositoryMongo
+from pydantic import BaseModel
 
 T = TypeVar('T', bound=BaseModel)
 
@@ -57,6 +56,12 @@ class NotebookRepository(BaseRepositoryMongo, INotebookRepository):
         with self.mongodb_connection.connection() as client:
             db = client[self.database]
             data = db[self.collection].find_one({'_id': notebook_id})
+            return data if data else None
+
+    async def find_by_year(self, title: str) -> Optional[T]:
+        with self.mongodb_connection.connection() as client:
+            db = client[self.database]
+            data = db[self.collection].find_one({'title': title})
             return data if data else None
 
     async def update(self, notebook_id: str, notebook_data: T):

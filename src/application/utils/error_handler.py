@@ -1,10 +1,9 @@
 import logging
 from functools import wraps
 
+from application.dto.ResponseDTO import ResponseDTO, StatusEnum
 from fastapi import HTTPException
 from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
-
-from application.dto.ResponseDTO import ResponseDTO, StatusEnum
 
 logger = logging.getLogger('Error Handler')
 

@@ -1,8 +1,7 @@
-from pydantic import EmailStr
-
 from application.repositories.IUserRepository import (
     IUserRepository,
 )
+from pydantic import EmailStr
 
 
 class UserService:

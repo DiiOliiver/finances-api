@@ -1,23 +1,13 @@
 from datetime import datetime
 from typing import List, Optional
 
+from application.dto.ExpenseDTO import CreateExpenseDTO
 from pydantic import BaseModel
-
-from domain.models.enum.ExpenseStatus import ExpenseStatus
 
 
 class NotebookCommentDTO(BaseModel):
     message: str
     user_id: str
-
-
-class NotebookExpense(BaseModel):
-    amount: float
-    closing_day: Optional[str] = None
-    due_day: Optional[str] = None
-    category: Optional[str] = None
-    description: Optional[str] = None
-    status: ExpenseStatus
 
 
 class CreateNotebookDTO(BaseModel):
@@ -28,7 +18,7 @@ class CreateNotebookDTO(BaseModel):
 
 class UpdateNotebookDTO(CreateNotebookDTO):
     comments: Optional[List[NotebookCommentDTO]] = None
-    expenses: Optional[List[NotebookExpense]] = None
+    expenses: Optional[List[CreateExpenseDTO]] = None
 
 
 class NotebookResponseDTO(UpdateNotebookDTO):

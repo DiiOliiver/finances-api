@@ -2,7 +2,7 @@ from enum import Enum
 
 
 class ExpenseStatus(str, Enum):
-    OPEN = 'open'
-    PAID = 'paid'
-    OVERDUE = 'overdue'
-    CANCELLED = 'cancelled'
+    OPEN = 'Aberto'
+    PAID = 'Pago'
+    OVERDUE = 'Atrasado'
+    CANCELLED = 'Cancelado'

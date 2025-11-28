@@ -1,11 +1,10 @@
 from typing import Optional
 
-from fastapi import HTTPException
-from starlette.status import HTTP_404_NOT_FOUND
-
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
 from application.repositories.INotebookRepository import INotebookRepository
 from domain.models.Notebook import Notebook
+from fastapi import HTTPException
+from starlette.status import HTTP_404_NOT_FOUND
 
 
 class DeleteNotebookUseCase:

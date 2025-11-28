@@ -1,13 +1,12 @@
-from fastapi import HTTPException
-from starlette.status import (
-    HTTP_404_NOT_FOUND,
-)
-
 from application.dto.NotebookDTO import NotebookResponseDTO
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
 from application.repositories.INotebookRepository import INotebookRepository
 from application.repositories.IUserRepository import IUserRepository
 from domain.models.Notebook import Notebook
+from fastapi import HTTPException
+from starlette.status import (
+    HTTP_404_NOT_FOUND,
+)
 
 
 class FindByNotebookUseCase:

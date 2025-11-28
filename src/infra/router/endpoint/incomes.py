@@ -1,14 +1,3 @@
-from dependency_injector.wiring import Provide, inject
-from fastapi import (
-    APIRouter,
-    Depends,
-    Request,
-)
-from starlette.status import (
-    HTTP_200_OK,
-    HTTP_201_CREATED,
-)
-
 from application.dto.IncomeDTO import CreateIncomeDTO, UpdateIncomeDTO
 from application.dto.PaginationDTO import PaginationDTO
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
@@ -20,7 +9,17 @@ from application.usecases.income.ListAllIncomeUseCase import (
 )
 from application.usecases.income.UpdateIncomeUseCase import UpdateIncomeUseCase
 from application.utils.error_handler import error_handler
+from dependency_injector.wiring import Provide, inject
+from fastapi import (
+    APIRouter,
+    Depends,
+    Request,
+)
 from infra.di.Container import Container
+from starlette.status import (
+    HTTP_200_OK,
+    HTTP_201_CREATED,
+)
 
 router = APIRouter(prefix='/incomes', tags=['Incomes'])
 

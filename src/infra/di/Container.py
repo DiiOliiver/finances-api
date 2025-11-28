@@ -1,7 +1,23 @@
-from dependency_injector import containers, providers
-
 from application.gateway.IUserGateway import IUserGateway
 from application.services.UserService import UserService
+from application.usecases.expense.CreateExpenseUseCase import (
+    CreateExpenseUseCase,
+)
+from application.usecases.expense.DeleteExpenseUseCase import (
+    DeleteExpenseUseCase,
+)
+from application.usecases.expense.FindByExpenseUseCase import (
+    FindByExpenseUseCase,
+)
+from application.usecases.expense.ListAllExpenseUseCase import (
+    ListAllExpenseUseCase,
+)
+from application.usecases.expense.UpdateExpenseUseCase import (
+    UpdateExpenseUseCase,
+)
+from application.usecases.extract.CreateExtractUseCase import (
+    CreateExtractUseCase,
+)
 from application.usecases.income.CreateIncomeUseCase import CreateIncomeUseCase
 from application.usecases.income.DeleteIncomeUseCase import DeleteIncomeUseCase
 from application.usecases.income.FindByIncomeUseCase import FindByIncomeUseCase
@@ -29,8 +45,10 @@ from application.usecases.user.DeleteUserUseCase import DeleteUserUseCase
 from application.usecases.user.FindByUserUseCase import FindByUserUseCase
 from application.usecases.user.ListAllUserUseCase import ListAllUserUseCase
 from application.usecases.user.UpdateUserUseCase import UpdateUserUseCase
+from dependency_injector import containers, providers
 from infra.config.settings import Settings
 from infra.database.MongoDBConection import MongoDBConnection
+from infra.repositories.ExpenseRepository import ExpenseRepository
 from infra.repositories.IncomeRepository import IncomeRepository
 from infra.repositories.NotebookRepository import NotebookRepository
 from infra.repositories.UserRepository import UserRepository
@@ -43,7 +61,9 @@ class Container(containers.DeclarativeContainer):
         modules=[
             'infra.router.endpoint.users',
             'infra.router.endpoint.incomes',
-            'infra.router.endpoint.notebook',
+            'infra.router.endpoint.notebooks',
+            'infra.router.endpoint.expenses',
+            'infra.router.endpoint.extracts',
         ]
     )
 
@@ -66,6 +86,10 @@ class Container(containers.DeclarativeContainer):
 
     notebook_repository = providers.Factory(
         NotebookRepository, mongodb_connection=connection_db_mongo
+    )
+
+    expense_repository = providers.Factory(
+        ExpenseRepository, mongodb_connection=connection_db_mongo
     )
 
     # Service
@@ -155,4 +179,38 @@ class Container(containers.DeclarativeContainer):
     delete_notebook_use_case = providers.Factory(
         DeleteNotebookUseCase,
         notebook_repository=notebook_repository,
+    )
+
+    # Usecase: notebook
+    create_expense_use_case = providers.Factory(
+        CreateExpenseUseCase,
+        expense_repository=expense_repository,
+        user_id=config.USER_ID,
+    )
+
+    list_expense_use_case = providers.Factory(
+        ListAllExpenseUseCase,
+        expense_repository=expense_repository,
+    )
+
+    find_by_expense_use_case = providers.Factory(
+        FindByExpenseUseCase,
+        expense_repository=expense_repository,
+    )
+
+    update_expense_use_case = providers.Factory(
+        UpdateExpenseUseCase,
+        expense_repository=expense_repository,
+    )
+
+    delete_expense_use_case = providers.Factory(
+        DeleteExpenseUseCase,
+        expense_repository=expense_repository,
+    )
+
+    # Usecase: extract
+    create_extract_use_case = providers.Factory(
+        CreateExtractUseCase,
+        notebook_repository=notebook_repository,
+        user_id=config.USER_ID,
     )

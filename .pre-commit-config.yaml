@@ -20,5 +20,5 @@ repos:
         entry: python ./.hooks/check_branch_name.py
         language: system
         always_run: true
-        stages: [commit]
+        stages: [pre-commit]
         pass_filenames: false

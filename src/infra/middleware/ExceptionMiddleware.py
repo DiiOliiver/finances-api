@@ -1,13 +1,12 @@
 import re
 from http import HTTPStatus
 
+from application.dto.ServiceErrorDTO import ServiceErrorDTO
 from fastapi import Request
 from fastapi.exceptions import RequestValidationError, ResponseValidationError
 from fastapi.responses import JSONResponse
 from jwt.exceptions import DecodeError
 from pydantic import ValidationError
-
-from application.dto.ServiceErrorDTO import ServiceErrorDTO
 
 
 class ExceptionMiddleware:
