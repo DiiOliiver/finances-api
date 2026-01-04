@@ -1,4 +1,5 @@
 from datetime import datetime
+from http import HTTPStatus
 
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
 from application.dto.UserDTO import UpdateUserDTO
@@ -7,7 +8,8 @@ from application.services.UserService import UserService
 from domain.models.User import User
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
-from starlette.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
+
+from security import get_password_hash
 
 
 class UpdateUserUseCase:
@@ -21,7 +23,7 @@ class UpdateUserUseCase:
         user_data = await self.user_repository.find_by(user_id)
         if not user_data:
             raise HTTPException(
-                status_code=HTTP_404_NOT_FOUND,
+                status_code=HTTPStatus.NOT_FOUND,
                 detail=ResponseDTO(
                     status=StatusEnum.FAIL,
                     message='Usuário informado não existe.',
@@ -33,7 +35,7 @@ class UpdateUserUseCase:
             user_old.email != user_new.email
         ) and await self.user_service.is_email_taken(user_new.email):
             raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST,
+                status_code=HTTPStatus.CONFLICT,
                 detail=ResponseDTO(
                     status=StatusEnum.FAIL,
                     message='Usuário informado já existe.',
@@ -42,6 +44,7 @@ class UpdateUserUseCase:
 
         user_old.name = user_new.name
         user_old.email = user_new.email
+        user_old.password = get_password_hash(user_new.password)
         user_old.status = user_new.status
         user_old.updated_at = datetime.utcnow()
 
@@ -50,7 +53,7 @@ class UpdateUserUseCase:
         )
         if not is_update:
             raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST,
+                status_code=HTTPStatus.BAD_REQUEST,
                 detail=ResponseDTO(
                     status=StatusEnum.FAIL,
                     message='Não foi possível alterar o usuário.',

@@ -1,4 +1,10 @@
-from application.dto.IncomeDTO import CreateIncomeDTO, UpdateIncomeDTO
+from http import HTTPStatus
+
+from application.dto.IncomeDTO import (
+    CreateIncomeDTO,
+    IncomeResponseDTO,
+    UpdateIncomeDTO,
+)
 from application.dto.PaginationDTO import PaginationDTO
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
 from application.usecases.income.CreateIncomeUseCase import CreateIncomeUseCase
@@ -10,21 +16,23 @@ from application.usecases.income.ListAllIncomeUseCase import (
 from application.usecases.income.UpdateIncomeUseCase import UpdateIncomeUseCase
 from application.utils.error_handler import error_handler
 from dependency_injector.wiring import Provide, inject
+from domain.models.enum.RoleActions import RoleActions
+from domain.models.enum.RolePermissions import RolePermissions
 from fastapi import (
     APIRouter,
     Depends,
     Request,
 )
 from infra.di.Container import Container
-from starlette.status import (
-    HTTP_200_OK,
-    HTTP_201_CREATED,
-)
+from infra.middleware.ValidateRolesDecorator import validate_role
 
 router = APIRouter(prefix='/incomes', tags=['Incomes'])
 
 
-@router.post('', status_code=HTTP_201_CREATED, summary='Cadastro de renda')
+@router.post('', status_code=HTTPStatus.CREATED, summary='Cadastro de renda')
+@validate_role(
+    role_actions=RoleActions.POST, role_permissions=RolePermissions.INCOMES
+)
 @inject
 @error_handler
 async def create_income(
@@ -41,7 +49,10 @@ async def create_income(
     )
 
 
-@router.get('', status_code=HTTP_200_OK, summary='Lista paginável de rendas')
+@router.get('', status_code=HTTPStatus.OK, summary='Lista paginável de rendas')
+@validate_role(
+    role_actions=RoleActions.GET, role_permissions=RolePermissions.INCOMES
+)
 @inject
 @error_handler
 async def read_incomes(
@@ -58,7 +69,12 @@ async def read_incomes(
     return ResponseDTO(status=StatusEnum.SUCCESS, data=pagination.dict())
 
 
-@router.get('/{income_id}', status_code=HTTP_200_OK, summary='Consulta renda')
+@router.get(
+    '/{income_id}', status_code=HTTPStatus.OK, summary='Consulta renda'
+)
+@validate_role(
+    role_actions=RoleActions.GET, role_permissions=RolePermissions.INCOMES
+)
 @inject
 @error_handler
 async def read_income(
@@ -68,11 +84,22 @@ async def read_income(
         Provide[Container.find_by_income_use_case]
     ),
 ) -> ResponseDTO:
-    income = await find_by_income_use_case.execute(income_id)
-    return ResponseDTO(status=StatusEnum.SUCCESS, data=income.dict())
+    income: IncomeResponseDTO = await find_by_income_use_case.execute(
+        income_id
+    )
+    return ResponseDTO(
+        status=StatusEnum.SUCCESS,
+        message='Renda encontrada com sucesso.',
+        data=income.dict(),
+    )
 
 
-@router.put('/{income_id}', status_code=HTTP_200_OK, summary='Atualizar renda')
+@router.put(
+    '/{income_id}', status_code=HTTPStatus.OK, summary='Atualizar renda'
+)
+@validate_role(
+    role_actions=RoleActions.UPDATE, role_permissions=RolePermissions.INCOMES
+)
 @inject
 @error_handler
 async def update_income(
@@ -91,7 +118,10 @@ async def update_income(
 
 
 @router.delete(
-    '/{income_id}', status_code=HTTP_200_OK, summary='Remover renda'
+    '/{income_id}', status_code=HTTPStatus.OK, summary='Remover renda'
+)
+@validate_role(
+    role_actions=RoleActions.DELETE, role_permissions=RolePermissions.INCOMES
 )
 @inject
 @error_handler

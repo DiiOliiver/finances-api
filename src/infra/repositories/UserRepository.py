@@ -2,6 +2,7 @@ from math import ceil
 from typing import Optional, TypeVar
 
 from application.dto.PaginationDTO import PaginationDTO
+from application.dto.UserDTO import UserResponseDTO
 from application.repositories.IUserRepository import IUserRepository
 from domain.models.User import User
 from infra.config.settings import Settings
@@ -50,7 +51,11 @@ class UserRepository(BaseRepositoryMongo, IUserRepository):
             total_pages = ceil(total_items / per_page) if per_page else 1
 
             data_cursor = collection.aggregate(paginated_pipeline)
-            data = [User(**doc).model_dump() for doc in data_cursor]
+
+            data = [
+                UserResponseDTO(**User(**doc).model_dump()).model_dump()
+                for doc in data_cursor
+            ]
 
             return PaginationDTO(
                 page=page,

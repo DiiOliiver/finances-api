@@ -1,12 +1,14 @@
 import logging
 
 from fastapi import FastAPI
+from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.utils import get_openapi
 from fastapi_pagination import add_pagination
 from infra.config.settings import Settings
 from infra.di.Container import Container
 from infra.middleware.ExceptionMiddleware import ExceptionMiddleware
 from infra.router.routers import routers as v1_routers
+from pydantic import ValidationError
 from starlette.middleware.cors import CORSMiddleware
 
 container = Container()
@@ -16,7 +18,7 @@ docs_url = '/docs' if config.ENVIRONMENT in ['dev'] else None
 root_path = '/dev' if config.ENVIRONMENT in ['dev'] else ''
 
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger('FastAPI app')
+logger = logging.getLogger(__name__)
 
 app = FastAPI(docs_url=docs_url, root_path=root_path)
 
@@ -56,5 +58,11 @@ app.add_middleware(
     allow_headers=['*'],
 )
 app.add_exception_handler(Exception, ExceptionMiddleware().exception_handler)
+app.add_exception_handler(
+    RequestValidationError, ExceptionMiddleware.exception_handler
+)
+app.add_exception_handler(
+    ValidationError, ExceptionMiddleware.exception_handler
+)
 
 add_pagination(app)

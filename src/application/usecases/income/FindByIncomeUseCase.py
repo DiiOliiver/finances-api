@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from application.dto.IncomeDTO import IncomeResponseDTO
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
 from application.repositories.IIncomeRepository import IIncomeRepository
@@ -5,9 +7,6 @@ from application.repositories.IUserRepository import IUserRepository
 from domain.models.Income import Income
 from domain.models.User import User
 from fastapi import HTTPException
-from starlette.status import (
-    HTTP_404_NOT_FOUND,
-)
 
 
 class FindByIncomeUseCase:
@@ -23,9 +22,9 @@ class FindByIncomeUseCase:
         income_data = await self.income_repository.find_by(income_id)
         if not income_data:
             raise HTTPException(
-                status_code=HTTP_404_NOT_FOUND,
+                status_code=HTTPStatus.NOT_FOUND,
                 detail=ResponseDTO(
-                    status=StatusEnum.FAIL,
+                    status=StatusEnum.ERROR,
                     message='A renda informada não existe.',
                 ).model_dump(),
             )
@@ -33,9 +32,9 @@ class FindByIncomeUseCase:
         user_data = await self.user_repository.find_by(income_data['user_id'])
         if not user_data:
             raise HTTPException(
-                status_code=HTTP_404_NOT_FOUND,
+                status_code=HTTPStatus.NOT_FOUND,
                 detail=ResponseDTO(
-                    status=StatusEnum.FAIL,
+                    status=StatusEnum.ERROR,
                     message='Não há usuário relacionado a renda informada.',
                 ).model_dump(),
             )

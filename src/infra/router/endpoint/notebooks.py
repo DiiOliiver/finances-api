@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from application.dto.NotebookDTO import CreateNotebookDTO, UpdateNotebookDTO
 from application.dto.PaginationDTO import PaginationDTO
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
@@ -18,21 +20,25 @@ from application.usecases.notebook.UpdateNotebookUseCase import (
 )
 from application.utils.error_handler import error_handler
 from dependency_injector.wiring import Provide, inject
+from domain.models.enum.RoleActions import RoleActions
+from domain.models.enum.RolePermissions import RolePermissions
 from fastapi import (
     APIRouter,
     Depends,
     Request,
 )
 from infra.di.Container import Container
-from starlette.status import (
-    HTTP_200_OK,
-    HTTP_201_CREATED,
-)
+from infra.middleware.ValidateRolesDecorator import validate_role
 
 router = APIRouter(prefix='/notebooks', tags=['Notebook'])
 
 
-@router.post('', status_code=HTTP_201_CREATED, summary='Cadastro de caderneta')
+@router.post(
+    '', status_code=HTTPStatus.CREATED, summary='Cadastro de caderneta'
+)
+@validate_role(
+    role_actions=RoleActions.POST, role_permissions=RolePermissions.NOTEBOOKS
+)
 @inject
 @error_handler
 async def create_notebook(
@@ -50,7 +56,10 @@ async def create_notebook(
 
 
 @router.get(
-    '', status_code=HTTP_200_OK, summary='Lista paginável de cadernetas'
+    '', status_code=HTTPStatus.OK, summary='Lista paginável de cadernetas'
+)
+@validate_role(
+    role_actions=RoleActions.GET, role_permissions=RolePermissions.NOTEBOOKS
 )
 @inject
 @error_handler
@@ -69,7 +78,10 @@ async def read_notebooks(
 
 
 @router.get(
-    '/{notebook_id}', status_code=HTTP_200_OK, summary='Consulta caderneta'
+    '/{notebook_id}', status_code=HTTPStatus.OK, summary='Consulta caderneta'
+)
+@validate_role(
+    role_actions=RoleActions.GET, role_permissions=RolePermissions.NOTEBOOKS
 )
 @inject
 @error_handler
@@ -85,7 +97,10 @@ async def read_notebook(
 
 
 @router.put(
-    '/{notebook_id}', status_code=HTTP_200_OK, summary='Atualizar caderneta'
+    '/{notebook_id}', status_code=HTTPStatus.OK, summary='Atualizar caderneta'
+)
+@validate_role(
+    role_actions=RoleActions.UPDATE, role_permissions=RolePermissions.NOTEBOOKS
 )
 @inject
 @error_handler
@@ -107,7 +122,10 @@ async def update_notebook(
 
 
 @router.delete(
-    '/{notebook_id}', status_code=HTTP_200_OK, summary='Remover caderneta'
+    '/{notebook_id}', status_code=HTTPStatus.OK, summary='Remover caderneta'
+)
+@validate_role(
+    role_actions=RoleActions.DELETE, role_permissions=RolePermissions.NOTEBOOKS
 )
 @inject
 @error_handler

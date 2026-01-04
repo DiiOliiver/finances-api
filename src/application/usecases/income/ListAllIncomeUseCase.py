@@ -1,4 +1,7 @@
+from typing import Dict, List, Optional
+
 from application.dto.PaginationDTO import PaginationDTO
+from application.dto.UserDTO import UserResponseDTO
 from application.repositories.IIncomeRepository import IIncomeRepository
 from application.repositories.IUserRepository import IUserRepository
 from domain.models.User import User
@@ -18,26 +21,16 @@ class ListAllIncomeUseCase:
         per_page = 10 if per_page < 1 else per_page
         pagination = await self.income_repository.paginate(page, per_page)
 
-        data_page = []
-        user_ids = set(
-            income['user_id']
-            for income in pagination.data
-            if 'user_id' in income
-        )
-        users_data = await self.user_repository.find_many_by_ids(
-            list(user_ids)
-        )
-        users_lookup = {
-            (user_dump := User(**user).model_dump())['id']: user_dump
-            for user in users_data
-        }
+        data_page: List[Dict] = []
+        for data in pagination.data:
+            users_data: Optional[dict] = await self.user_repository.find_by(
+                data.get('user_id')
+            )
+            data.update({
+                'user': UserResponseDTO(**User(**users_data).model_dump())
+            })
+            data.pop('user_id', None)
+            data_page.append(data)
 
-        for income in pagination.data:
-            user_data = users_lookup.get(income.get('user_id'))
-            if user_data is None:
-                continue
-            income['user'] = User(**user_data).model_dump()
-            income.pop('user_id', None)
-            data_page.append(income)
         pagination.data = data_page
         return pagination

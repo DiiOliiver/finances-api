@@ -1,11 +1,12 @@
 import logging
 from functools import wraps
+from http import HTTPStatus
 
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
 from fastapi import HTTPException
-from starlette.status import HTTP_500_INTERNAL_SERVER_ERROR
 
-logger = logging.getLogger('Error Handler')
+logging.basicConfig(level=logging.ERROR)
+logger = logging.getLogger(__name__)
 
 
 def error_handler(func):
@@ -18,7 +19,7 @@ def error_handler(func):
         except Exception as exc:
             logger.error(f'Erro inesperado: {exc}')
         raise HTTPException(
-            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
+            status_code=HTTPStatus.INTERNAL_SERVER_ERROR,
             detail=ResponseDTO(
                 status=StatusEnum.ERROR,
                 message='Ocorreu um erro interno no servidor.',

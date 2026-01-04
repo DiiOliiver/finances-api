@@ -1,5 +1,8 @@
 from application.gateway.IUserGateway import IUserGateway
 from application.services.UserService import UserService
+from application.usecases.auth.LoginForAccessTokenUseCase import (
+    LoginForAccessTokenUseCase,
+)
 from application.usecases.expense.CreateExpenseUseCase import (
     CreateExpenseUseCase,
 )
@@ -59,6 +62,7 @@ class Container(containers.DeclarativeContainer):
 
     wiring_config = containers.WiringConfiguration(
         modules=[
+            'infra.router.endpoint.auth',
             'infra.router.endpoint.users',
             'infra.router.endpoint.incomes',
             'infra.router.endpoint.notebooks',
@@ -212,5 +216,11 @@ class Container(containers.DeclarativeContainer):
     create_extract_use_case = providers.Factory(
         CreateExtractUseCase,
         notebook_repository=notebook_repository,
-        user_id=config.USER_ID,
+        user_repository=user_repository,
+    )
+
+    # auth
+    login_for_access_token_use_case = providers.Factory(
+        LoginForAccessTokenUseCase,
+        user_repository=user_repository,
     )

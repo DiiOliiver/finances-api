@@ -1,3 +1,4 @@
+from http import HTTPStatus
 from typing import Optional
 
 from application.dto.NotebookDTO import UpdateNotebookDTO
@@ -6,7 +7,6 @@ from application.repositories.INotebookRepository import INotebookRepository
 from domain.models.Notebook import Notebook
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
-from starlette.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
 
 
 class UpdateNotebookUseCase:
@@ -21,7 +21,7 @@ class UpdateNotebookUseCase:
         )
         if not notebook_data:
             raise HTTPException(
-                status_code=HTTP_404_NOT_FOUND,
+                status_code=HTTPStatus.NOT_FOUND,
                 detail=ResponseDTO(
                     status=StatusEnum.FAIL,
                     message='A caderneta informada não existe.',
@@ -36,7 +36,7 @@ class UpdateNotebookUseCase:
         )
         if not is_update:
             raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST,
+                status_code=HTTPStatus.BAD_REQUEST,
                 detail=ResponseDTO(
                     status=StatusEnum.FAIL,
                     message='Não foi possível alterar a caderneta.',
