@@ -1,4 +1,5 @@
 from datetime import datetime
+from http import HTTPStatus
 from typing import Optional
 
 from application.dto.IncomeDTO import UpdateIncomeDTO
@@ -7,7 +8,6 @@ from application.repositories.IIncomeRepository import IIncomeRepository
 from domain.models.Income import Income
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
-from starlette.status import HTTP_400_BAD_REQUEST, HTTP_404_NOT_FOUND
 
 
 class UpdateIncomeUseCase:
@@ -22,9 +22,9 @@ class UpdateIncomeUseCase:
         )
         if not income_data:
             raise HTTPException(
-                status_code=HTTP_404_NOT_FOUND,
+                status_code=HTTPStatus.NOT_FOUND,
                 detail=ResponseDTO(
-                    status=StatusEnum.FAIL,
+                    status=StatusEnum.ERROR,
                     message='A renda informada não existe.',
                 ).model_dump(),
             )
@@ -41,7 +41,7 @@ class UpdateIncomeUseCase:
         )
         if not is_update:
             raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST,
+                status_code=HTTPStatus.NOT_FOUND,
                 detail=ResponseDTO(
                     status=StatusEnum.FAIL,
                     message='Não foi possível alterar a renda.',

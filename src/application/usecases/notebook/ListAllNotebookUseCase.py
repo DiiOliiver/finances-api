@@ -1,8 +1,11 @@
+from typing import Dict, List
+
+from application.dto.ExpenseDTO import ExpenseResponseDTO
 from application.dto.NotebookDTO import NotebookResponseDTO
 from application.dto.PaginationDTO import PaginationDTO
-from application.dto.UserDTO import CreateUserDTO
 from application.repositories.INotebookRepository import INotebookRepository
 from application.repositories.IUserRepository import IUserRepository
+from domain.models.Expense import Expense
 
 
 class ListAllNotebookUseCase:
@@ -20,32 +23,20 @@ class ListAllNotebookUseCase:
 
         pagination = await self.notebook_repository.paginate(page, per_page)
 
-        # Trata None ou ausência de 'users' como lista vazia
-        user_ids = {
-            user_id
-            for notebook in pagination.data
-            for user_id in (notebook.get('users') or [])
-        }
+        data_page: List[Dict] = []
+        for data in pagination.data:
+            notebook_dto: Dict = NotebookResponseDTO(**data).model_dump()
+            expenses: List[Dict] = self._mounted_expense(notebook_dto)
+            notebook_dto.update({'expenses': expenses})
+            data_page.append(notebook_dto)
 
-        users_lookup = {}
-        if user_ids:
-            users_data = await self.user_repository.find_many_by_ids(
-                list(user_ids)
-            )
-            users_lookup = {
-                user['_id']: CreateUserDTO(**user) for user in users_data
-            }
-
-        notebook_data = []
-        for notebook in pagination.data:
-            notebook_dto = NotebookResponseDTO(**notebook).model_dump()
-            notebook_dto['users'] = [
-                users_lookup[user_id]
-                for user_id in (notebook.get('users') or [])
-                if user_id in users_lookup
-            ]
-            notebook_data.append(notebook_dto)
-
-        pagination.data = notebook_data
+        pagination.data = data_page
 
         return pagination
+
+    @staticmethod
+    def _mounted_expense(notebook_dto: Dict) -> List[Dict]:
+        return [
+            ExpenseResponseDTO(**Expense(**expense).model_dump()).model_dump()
+            for expense in notebook_dto.get('expenses', [])
+        ]

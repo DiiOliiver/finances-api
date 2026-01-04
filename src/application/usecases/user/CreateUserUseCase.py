@@ -1,4 +1,6 @@
+import logging
 from datetime import datetime
+from http import HTTPStatus
 
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
 from application.dto.UserDTO import CreateUserDTO
@@ -7,7 +9,11 @@ from application.repositories.IUserRepository import IUserRepository
 from application.services.UserService import UserService
 from domain.models.User import User
 from fastapi import HTTPException
-from starlette.status import HTTP_400_BAD_REQUEST
+
+from security import get_password_hash
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class CreateUserUseCase:
@@ -24,22 +30,35 @@ class CreateUserUseCase:
     async def execute(self, data: CreateUserDTO) -> str:
         if await self.user_service.is_email_taken(data.email):
             raise HTTPException(
-                status_code=HTTP_400_BAD_REQUEST,
+                status_code=HTTPStatus.CONFLICT,
                 detail=ResponseDTO(
                     status=StatusEnum.FAIL,
                     message=f'Usuário {data.name} já existe.',
-                ),
+                ).model_dump(),
             )
 
-        user = User(
-            name=data.name,
-            email=data.email,
-            status=True,
-            created_at=datetime.utcnow(),
-            updated_at=None,
-        )
-        await self.user_repository.add(user)
+        try:
+            hashed_password = get_password_hash(data.password)
 
-        await self.user_gateway.send_welcome_email(user.email, user.name)
+            user = User(
+                name=data.name,
+                email=data.email,
+                status=True,
+                password=hashed_password,
+                created_at=datetime.utcnow(),
+                updated_at=None,
+            )
+            await self.user_repository.add(user)
 
-        return f'Usuário {user.name} cadastrado com sucesso.'
+            await self.user_gateway.send_welcome_email(user.email, user.name)
+
+            return f'Usuário {user.name} cadastrado com sucesso.'
+        except Exception as exc:
+            logger.error(f'Erro ao criar usuário: {exc}')
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail=ResponseDTO(
+                    status=StatusEnum.FAIL,
+                    message='Erro ao criar usuário.',
+                ).model_dump(),
+            )

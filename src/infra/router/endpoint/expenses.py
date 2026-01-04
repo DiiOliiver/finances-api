@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from application.dto.ExpenseDTO import CreateExpenseDTO, UpdateExpenseDTO
 from application.dto.PaginationDTO import PaginationDTO
 from application.dto.ResponseDTO import ResponseDTO, StatusEnum
@@ -18,22 +20,24 @@ from application.usecases.expense.UpdateExpenseUseCase import (
 )
 from application.utils.error_handler import error_handler
 from dependency_injector.wiring import Provide, inject
+from domain.models.enum.RoleActions import RoleActions
+from domain.models.enum.RolePermissions import RolePermissions
 from fastapi import (
     APIRouter,
     Depends,
     Request,
 )
 from infra.di.Container import Container
-from starlette.status import (
-    HTTP_200_OK,
-    HTTP_201_CREATED,
-)
+from infra.middleware.ValidateRolesDecorator import validate_role
 
 router = APIRouter(prefix='/expenses', tags=['Expenses'])
 
 
 @router.post(
-    '', status_code=HTTP_201_CREATED, summary='Cadastro de despesa fixa'
+    '', status_code=HTTPStatus.CREATED, summary='Cadastro de despesa fixa'
+)
+@validate_role(
+    role_actions=RoleActions.POST, role_permissions=RolePermissions.EXPENSES
 )
 @inject
 @error_handler
@@ -52,7 +56,10 @@ async def create_expense(
 
 
 @router.get(
-    '', status_code=HTTP_200_OK, summary='Lista paginável de despesas fixas'
+    '', status_code=HTTPStatus.OK, summary='Lista paginável de despesas fixas'
+)
+@validate_role(
+    role_actions=RoleActions.GET, role_permissions=RolePermissions.EXPENSES
 )
 @inject
 @error_handler
@@ -71,7 +78,10 @@ async def read_expenses(
 
 
 @router.get(
-    '/{expense_id}', status_code=HTTP_200_OK, summary='Consulta despesa fixa'
+    '/{expense_id}', status_code=HTTPStatus.OK, summary='Consulta despesa fixa'
+)
+@validate_role(
+    role_actions=RoleActions.GET, role_permissions=RolePermissions.EXPENSES
 )
 @inject
 @error_handler
@@ -87,7 +97,12 @@ async def read_expense(
 
 
 @router.put(
-    '/{expense_id}', status_code=HTTP_200_OK, summary='Atualizar despesa fixa'
+    '/{expense_id}',
+    status_code=HTTPStatus.OK,
+    summary='Atualizar despesa fixa',
+)
+@validate_role(
+    role_actions=RoleActions.UPDATE, role_permissions=RolePermissions.EXPENSES
 )
 @inject
 @error_handler
@@ -107,7 +122,10 @@ async def update_expense(
 
 
 @router.delete(
-    '/{expense_id}', status_code=HTTP_200_OK, summary='Remover caderneta'
+    '/{expense_id}', status_code=HTTPStatus.OK, summary='Remover caderneta'
+)
+@validate_role(
+    role_actions=RoleActions.DELETE, role_permissions=RolePermissions.EXPENSES
 )
 @inject
 @error_handler

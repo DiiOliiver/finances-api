@@ -13,6 +13,12 @@ class User(BaseModel):
     email: EmailStr = Field(
         ..., min_length=5, max_length=100, description='Nome do usuário'
     )
+    password: str = Field(
+        ...,
+        min_length=6,
+        max_length=100,
+        description='Senha do usuário',
+    )
     status: bool = Field(
         True, description='Status do usuário. Ativo(true) Inativo(false)'
     )
